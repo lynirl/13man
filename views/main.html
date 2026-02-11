@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/assets/favicon.png" type="image/x-icon">
+    <title>Stroopy app</title>
+    <link rel="stylesheet" href="../style/stroop-app.css">
+</head>
+<body>
+    <div id="game-container">
+        <p style="display:none" id="wrong-sign"> X </p>
+        <p style="display:none" id="warning-message"> Veuillez bouger la souris plus vite </p>
+        <div id="row-container">
+            <div class="row">
+                <button class="answer-button">Rouge</button>
+                <button class="answer-button">Bleu</button>
+            </div>
+            <div class="row">
+                <button class="answer-button">Jaune</button>
+                <button class="answer-button">Vert</button>
+            </div>
+        </div>
+        <h1 id="color-text"></h1>
+        <button id="main-button">Démarrer</button>
+    </div>
+
+    <div id="quiz-counter" style="position: fixed; top: 10px; right: 10px; font-size: 18px; font-weight: bold;">
+        Quiz 1 / 6
+    </div>
+
+    <div id="end-screen" style="display:none;">
+    <h2>tié un tigre</h2>
+    <p id="final-score"></p>
+</div>
+
+</body>
+
+<script src = "../scripts/view.js"> </script>
+<script type="module" src = "../scripts/script.js"></script>
+</html>
