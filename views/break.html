@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/treisman-app.css">
     <title>Treisman app</title>
 </head>
-<body>
-    
+ <body>
+
+<div class="pause-container">
+    <h2>Pause</h2>
+
+    <p>
+        Vous pouvez faire une pause avant de continuer.
+    </p>
+
+    <p>
+        Lorsque vous êtes prêt(e), cliquez sur le bouton ci-dessous.
+    </p>
+
+    <button id="resume-btn">Reprendre l’expérience</button>
+</div>
+
+<script>
+    document.getElementById("resume-btn").addEventListener("click", () => {
+        window.location.href = "main.html";
+    });
+</script>
+
 </body>
 </html>
