@@ -176,7 +176,6 @@ function endAllQuizzes() {
   //     genre: user.genre,
   //     lateralite: user.lateralite,
   //     daltonisme: user.daltonisme,
-  //     periph: user.periph
   //   },
   //   totalQuizzes: TOTAL_QUIZZES,
   //   allResults: allQuizResults
