@@ -170,17 +170,17 @@ function endAllQuizzes() {
   localStorage.removeItem("participantData");
 
   //envoyer TOUTES les donnees des 6 quiz
-  savedata({
-    user: {
-      age: user.age,
-      genre: user.genre,
-      lateralite: user.lateralite,
-      daltonisme: user.daltonisme,
-      periph: user.periph
-    },
-    totalQuizzes: TOTAL_QUIZZES,
-    allResults: allQuizResults
-  });
+  // savedata({
+  //   user: {
+  //     age: user.age,
+  //     genre: user.genre,
+  //     lateralite: user.lateralite,
+  //     daltonisme: user.daltonisme,
+  //     periph: user.periph
+  //   },
+  //   totalQuizzes: TOTAL_QUIZZES,
+  //   allResults: allQuizResults
+  // });
 }
 
 //enregistrer la reponse
