@@ -1,4 +1,4 @@
-import { Question } from "./Question.js";
+import { Essai } from "./Essai.js";
 
 export class Quiz {
   constructor(type) {
@@ -10,54 +10,8 @@ export class Quiz {
 
   generateQuestions(type) {
     let questions = [];
-     // Type 1: 80% congruent 20% incongruent
-    const Type1Quiz = [
-      { colorName: "rouge", colorText: "rouge" },
-      { colorName: "vert", colorText: "vert" },
-      { colorName: "vert", colorText: "rouge" },
-      { colorName: "vert", colorText: "rouge" },
-      { colorName: "vert", colorText: "rouge" },
-      { colorName: "vert", colorText: "rouge" },
-      { colorName: "rouge", colorText: "vert" },
-      { colorName: "rouge", colorText: "vert" },
-      { colorName: "rouge", colorText: "vert" },
-      { colorName: "rouge", colorText: "vert" },
-      { colorName: "bleu", colorText: "bleu" },
-      { colorName: "bleu", colorText: "bleu" },
-      { colorName: "bleu", colorText: "bleu" },
-      { colorName: "bleu", colorText: "bleu" },
-      { colorName: "jaune", colorText: "jaune" },
-      { colorName: "jaune", colorText: "jaune" },
-      { colorName: "jaune", colorText: "jaune" },
-      { colorName: "jaune", colorText: "jaune" },
-      { colorName: "bleu", colorText: "jaune" },
-      { colorName: "jaune", colorText: "bleu" },
-    ]
 
-
-    // Type 2: 80% incongruent 20% congruent
-    const Type2Quiz = [
-      { colorName: "bleu", colorText: "bleu" },
-      { colorName: "jaune", colorText: "jaune" },
-      { colorName: "bleu", colorText: "jaune" },
-      { colorName: "bleu", colorText: "jaune" },
-      { colorName: "bleu", colorText: "jaune" },
-      { colorName: "bleu", colorText: "jaune" },
-      { colorName: "jaune", colorText: "bleu" },
-      { colorName: "jaune", colorText: "bleu" },
-      { colorName: "jaune", colorText: "bleu" },
-      { colorName: "jaune", colorText: "bleu" },
-      { colorName: "rouge", colorText: "rouge" },
-      { colorName: "rouge", colorText: "rouge" },
-      { colorName: "rouge", colorText: "rouge" },
-      { colorName: "rouge", colorText: "rouge" },
-      { colorName: "vert", colorText: "vert" },
-      { colorName: "vert", colorText: "vert" },
-      { colorName: "vert", colorText: "vert" },
-      { colorName: "vert", colorText: "vert" },
-      { colorName: "rouge", colorText: "vert" },
-      { colorName: "vert", colorText: "rouge" },
-    ]
+    //TO DO : implem avec questions Treisman 
 
     if (type === 1) {
       questions.push(...Type1Quiz);
@@ -66,7 +20,7 @@ export class Quiz {
     }
 
     questions = this.shuffleArray(questions);
-    return questions.map((q) => new Question(q));
+    return questions.map((q) => new Essai(q));
   }
 
   shuffleArray(questions) {
