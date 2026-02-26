@@ -1,3 +1,5 @@
+//un quiz: c'est un set d'essais
+
 import { Essai } from "./Essai.js";
 
 export class Quiz {
