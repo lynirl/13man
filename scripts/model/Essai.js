@@ -1,9 +1,12 @@
 //un essai: c'est l'affichage des formes et leur choix par l'utilisateur. en gros c'est une question
 
+import { Item } from "./Item.js";
 export class Essai {
-  constructor({ typeEssai, nbItems }) {
+  constructor({typeEssai, nbItems }) {
     this.typeEssai = typeEssai;
     this.nbItems = nbItems;
+    this.items = [];
+    this.generateItems();
   }
 
   generateItems() {
@@ -23,10 +26,10 @@ export class Essai {
     const distractorColor = Color.filter(color => color !== targetColor)[Math.floor(Math.random() * (Color.length - 1))];
     const shape = Shape[Math.floor(Math.random() * Shape.length)];
 
-    this.nbItems.push(new Item(shape, targetColor, true));
+    this.items.push(new Item(shape, targetColor, true));
 
     for (let i = 1; i < this.nbItems; i++) {
-      this.nbItems.push(new Item(shape, distractorColor));
+      this.items.push(new Item(shape, distractorColor));
     }
   }
 
@@ -38,16 +41,15 @@ export class Essai {
     const targetShape = Shape[Math.floor(Math.random() * Shape.length)];
     const distractorColors = Color.filter(color => color !== targetColor);
     const distractorShapes = Shape.filter(shape => shape !== targetShape);
-    this.nbItems.push(new Item(targetShape, targetColor, true));
+    this.items.push(new Item(targetShape, targetColor, true));
 
     for (let i = 1; i < this.nbItems; i++) {
       const color = distractorColors[Math.floor(Math.random() * distractorColors.length)];
       const shape = distractorShapes[Math.floor(Math.random() * distractorShapes.length)];
-      this.nbItems.push(new Item(shape, color));
+      this.items.push(new Item(shape, color));
     }
   }
 }
-
 
 export const TypeEssai = {
   TRAITSIMPLE: "TRAITSIMPLE",

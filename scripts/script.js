@@ -76,33 +76,24 @@ let rightAnswerValue = "";
 function showCurrentQuestion() {
   // Afficher le texte au bout de 300ms
   setTimeout(() => {
-    const q = quiz.getCurrentQuestion();
-
-    // ui.itemsContainer.innerHTML = q.items.map(item => `
-    //   <div class="item" data-color="${item.color}" data-shape="${item.shape}">
-    //     <div class="item-shape ${shapeMap[item.shape]}" style="background-color: ${colorMap[item.color]};"></div>
-    //   </div>
-    // `).join('');
-    forEach(q.nbItems, (item) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.className = "item";
-      itemDiv.dataset.color = item.color;
-      itemDiv.dataset.shape = item.shape;
-      if (item.isCorrect) {
-        itemDiv.classList.add("correct");
+      console.log(quiz.questions)
+      for (let item of quiz.questions[currentQuizNumber].items) {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "item";
+        itemDiv.style.color = item.color;
+        itemDiv.classList.add(item.shape);
+        if (item.isCorrect) {
+          itemDiv.classList.add("correct");
+        }
+        const shapeDiv = document.createElement("div");
+        shapeDiv.className = `item-shape ${shapeMap[item.shape]}`;
+        shapeDiv.style.backgroundColor = colorMap[item.color];
+        itemDiv.appendChild(shapeDiv);
+        ui.itemsContainer.appendChild(itemDiv);
       }
-      const shapeDiv = document.createElement("div");
-      shapeDiv.className = `item-shape ${shapeMap[item.shape]}`;
-      shapeDiv.style.backgroundColor = colorMap[item.color];
-      itemDiv.appendChild(shapeDiv);
-      ui.itemsContainer.appendChild(itemDiv);
-    });
-
-    //rightAnswerValue = q.colorName;
-
-    ui.itemsContainer.dataset.target = q.colorName;
     document.body.style.cursor = "default";
   }, 300);
+
 }
 
 //passer au quiz suivant
@@ -200,10 +191,6 @@ function submitAnswer(itemClicked) {
   console.log(coordSamples);
   console.log("Mouvement time :", movementTime);
 
-  if (initiationTime > 0.5) {
-    document.getElementById("warning-message").style.display = "block";
-  }
-
   const q = quiz.getCurrentQuestion();
 
   const answers = new Answer({
@@ -246,7 +233,6 @@ let isAnswerLocked = true;
 // (on initie tout)
 ui.btnStart.addEventListener("click", () => {
   showCurrentQuestion();
-  document.getElementById("warning-message").style.display = "none";
   ui.btnStart.style.display = "none";
   document.body.style.cursor = "none";
   isMouseLocked = false;

@@ -6,7 +6,9 @@ import { TypeEssai } from "./Essai.js";
 export class Quiz {
   constructor() {
     this.questions = this.generateQuestions();
-    this.answers = [];
+    this.answers = { 
+      
+    };
     this.currentIndex = 0;
   }
 
@@ -18,37 +20,43 @@ export class Quiz {
    * - conjonction avec 16 items
    */
   generateQuestions() {
-    let questions = [];
+    let questions = {
+      partie1: [],
+      partie2: [],
+      partie3: [],
+      partie4: []
+    }
+      
     const nbEssais = 20;
 
     for (let i = 0; i < nbEssais; i++) {
-      questions.push(new Essai({
+      
+      questions.partie1 = this.shuffleArray(new Essai({
         typeEssai: TypeEssai.TRAITSIMPLE,
         nbItems: 9
        })
       )
 
-      questions.push(new Essai({
+      questions.partie2 = this.shuffleArray(new Essai({
         typeEssai: TypeEssai.TRAITSIMPLE,
         nbItems: 16
        })
       )
 
-      questions.push(new Essai({
+      questions.partie3 = this.shuffleArray(new Essai({
         typeEssai: TypeEssai.CONJONCTION,
         nbItems: 9
        })
       )
 
-      questions.push(new Essai({
+      questions.partie4 = this.shuffleArray(new Essai({
         typeEssai: TypeEssai.CONJONCTION,
         nbItems: 16
        })
       )
     }
 
-    questions = this.shuffleArray(questions);
-    return questions.map((q) => new Essai(q));
+    return questions;
   }
 
   shuffleArray(questions) {
