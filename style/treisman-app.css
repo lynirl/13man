@@ -103,7 +103,6 @@ background-color: #ffffff;
     background-color: #666464;
 }
 
-
 #game-container {
     display: flex;
     flex-direction: column;
@@ -148,4 +147,58 @@ background-color: #ffffff;
     position: absolute;
     top: 80%;
     user-select: none;
+}
+
+
+#items-container {
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    grid-template-rows: repeat(3, 80px);
+    gap: 25px;
+
+    justify-content: center;
+    align-content: center;
+
+    margin-top: 3em;
+}
+
+
+.item {
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+}
+
+/* Conteneur interne de la forme */
+.item-shape {
+    display: block;
+}
+
+/* ----------- CARRE ----------- */
+
+.item.square .item-shape {
+    width: 45px;
+    height: 45px;
+    background-color: currentColor;
+}
+
+/* ----------- TRIANGLE ----------- */
+
+.item.triangle .item-shape {
+    width: 0;
+    height: 0;
+
+    border-left: 22px solid transparent;
+    border-right: 22px solid transparent;
+    border-bottom: 45px solid currentColor;
+}
+
+/* Petit effet hover discret */
+.item:hover {
+    transform: scale(1.1);
 }

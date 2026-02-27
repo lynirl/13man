@@ -31,28 +31,28 @@ export class Quiz {
 
     for (let i = 0; i < nbEssais; i++) {
       
-      questions.partie1 = this.shuffleArray(new Essai({
-        typeEssai: TypeEssai.TRAITSIMPLE,
-        nbItems: 9
-       })
+      questions.partie1 = this.shuffleArray(new Essai(
+        TypeEssai.TRAITSIMPLE,
+        9
+       )
       )
 
-      questions.partie2 = this.shuffleArray(new Essai({
-        typeEssai: TypeEssai.TRAITSIMPLE,
-        nbItems: 16
-       })
+      questions.partie2 = this.shuffleArray(new Essai(
+        TypeEssai.TRAITSIMPLE,
+        16
+       )
       )
 
-      questions.partie3 = this.shuffleArray(new Essai({
-        typeEssai: TypeEssai.CONJONCTION,
-        nbItems: 9
-       })
+      questions.partie3 = this.shuffleArray(new Essai(
+        TypeEssai.CONJONCTION,
+        9
+       )
       )
 
-      questions.partie4 = this.shuffleArray(new Essai({
-        typeEssai: TypeEssai.CONJONCTION,
-        nbItems: 16
-       })
+      questions.partie4 = this.shuffleArray(new Essai(
+        TypeEssai.CONJONCTION,
+        16
+       )
       )
     }
 

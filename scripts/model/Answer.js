@@ -1,5 +1,5 @@
 export class Answer {
-  constructor({ question, itemAnswer, initiation, movement, area, coordSamples }) {
+  constructor(question, itemAnswer, initiation, movement, area, coordSamples) {
     this.question = question;
     this.itemAnswer = itemAnswer;
     this.initiationTime = initiation;

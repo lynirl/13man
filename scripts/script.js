@@ -76,8 +76,7 @@ let rightAnswerValue = "";
 function showCurrentQuestion() {
   // Afficher le texte au bout de 300ms
   setTimeout(() => {
-      console.log(quiz.questions)
-      for (let item of quiz.questions[currentQuizNumber].items) {
+      for (let item of quiz.questions.partie1.items) {
         const itemDiv = document.createElement("div");
         itemDiv.className = "item";
         itemDiv.style.color = item.color;
@@ -93,7 +92,6 @@ function showCurrentQuestion() {
       }
     document.body.style.cursor = "default";
   }, 300);
-
 }
 
 //passer au quiz suivant
