@@ -10,25 +10,24 @@ const colorMap = {
   vert: "green",
 };
 
-const frenchColors = Object.keys(colorMap);
-
-//avoir un element aleatoire de l'array
-function getRandom(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+const shapeMap = {
+  cercle: "circle",
+  carre: "square",
+  triangle: "triangle"
+};
 
 //elements de la vue
 const ui = {
-  colorText: document.getElementById("color-text"),
   btnStart: document.getElementById("main-button"),
   gameContainer: document.getElementById("game-container"),
+  itemsContainer: document.getElementById("items-container"),
   endScreen: document.getElementById("end-screen"),
   finalScore: document.getElementById("final-score"),
   btnRestart: document.getElementById("btn-restart"),
-  answerButtons: document.querySelectorAll(".answer-button"),
+  answerButtons: document.querySelectorAll(".item"),
   wrongSign: document.getElementById("wrong-sign"),
-  quizCounter: document.getElementById("quiz-counter"), // Ajouter cet élément dans le HTML
-};
+  quizCounter: document.getElementById("quiz-counter")
+}
 
 //donnees du formulaire
 let participantData = JSON.parse(localStorage.getItem("participantData")) || {};
@@ -39,19 +38,12 @@ let formData = JSON.parse(localStorage.getItem("participantData")) || {};
 const user = new User(formData);
 
 //gestion des quiz
-const TOTAL_QUIZZES = 6;
 let currentQuizNumber = 1;
 //pour les resultats des quiz
 let allQuizResults = [];
 
-//fonction pour déterminer le type de quiz
-function getQuizType(quizNumber) {
-  //les 3 premiers quiz sont du type 1, les 3 autres du type 2
-  return quizNumber <= 3 ? 1 : 2;
-}
-
-//creation du premier quiz
-let quiz = new Quiz(getQuizType(currentQuizNumber));
+//creation du quiz
+let quiz = new Quiz();
 user.setQuiz(quiz);
 console.log("Quiz questions : ", quiz.questions);
 
@@ -69,16 +61,16 @@ let hasMoved = false;
 let rightAnswerValue = "";
 
 // Mettre à jour l'affichage du compteur
-function updateQuizCounter() {
-  if (ui.quizCounter) {
-    const quizType = getQuizType(currentQuizNumber);
-    ui.quizCounter.innerHTML = `Quiz ${currentQuizNumber} / ${TOTAL_QUIZZES} (Type ${quizType})`;
-  }
-  // Aussi dans le titre du bouton start
-  ui.btnStart.innerHTML = currentQuizNumber === 1 
-    ? "Démarrer" 
-    : `Continuer (${currentQuizNumber}/${TOTAL_QUIZZES})`;
-}
+// function updateQuizCounter() {
+//   if (ui.quizCounter) {
+//     const quizType = getQuizType(currentQuizNumber);
+//     ui.quizCounter.innerHTML = `Quiz ${currentQuizNumber} / ${TOTAL_QUIZZES} (Type ${quizType})`;
+//   }
+//   // Aussi dans le titre du bouton start
+//   ui.btnStart.innerHTML = currentQuizNumber === 1 
+//     ? "Démarrer" 
+//     : `Continuer (${currentQuizNumber}/${TOTAL_QUIZZES})`;
+// }
 
 //afficher une question
 function showCurrentQuestion() {
@@ -86,60 +78,78 @@ function showCurrentQuestion() {
   setTimeout(() => {
     const q = quiz.getCurrentQuestion();
 
-    ui.colorText.innerHTML = q.colorText.toUpperCase();
-    ui.colorText.style.color = colorMap[q.colorName];
-    rightAnswerValue = q.colorName;
+    // ui.itemsContainer.innerHTML = q.items.map(item => `
+    //   <div class="item" data-color="${item.color}" data-shape="${item.shape}">
+    //     <div class="item-shape ${shapeMap[item.shape]}" style="background-color: ${colorMap[item.color]};"></div>
+    //   </div>
+    // `).join('');
+    forEach(q.nbItems, (item) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "item";
+      itemDiv.dataset.color = item.color;
+      itemDiv.dataset.shape = item.shape;
+      if (item.isCorrect) {
+        itemDiv.classList.add("correct");
+      }
+      const shapeDiv = document.createElement("div");
+      shapeDiv.className = `item-shape ${shapeMap[item.shape]}`;
+      shapeDiv.style.backgroundColor = colorMap[item.color];
+      itemDiv.appendChild(shapeDiv);
+      ui.itemsContainer.appendChild(itemDiv);
+    });
 
-    ui.colorText.dataset.target = q.colorName;
+    //rightAnswerValue = q.colorName;
+
+    ui.itemsContainer.dataset.target = q.colorName;
     document.body.style.cursor = "default";
   }, 300);
 }
 
 //passer au quiz suivant
-function nextQuiz() {
-  //on stocke les résultats du quiz actuel
-  allQuizResults.push({
-    quizNumber: currentQuizNumber,
-    quizTitle: quiz.title,
-    quizType: getQuizType(currentQuizNumber),
-    score: quiz.getScore(),
-    total: quiz.questions.length,
-    trials: results
-  });
+// function nextQuiz() {
+//   //on stocke les résultats du quiz actuel
+//   allQuizResults.push({
+//     quizNumber: currentQuizNumber,
+//     quizTitle: quiz.title,
+//     quizType: getQuizType(currentQuizNumber),
+//     score: quiz.getScore(),
+//     total: quiz.questions.length,
+//     trials: results
+//   });
 
-  currentQuizNumber++;
+//   currentQuizNumber++;
 
-  if (currentQuizNumber <= TOTAL_QUIZZES) {
-    //et on crée le prochain avec le bon type
-    quiz = new Quiz(getQuizType(currentQuizNumber));
-    user.setQuiz(quiz);
-    results = []; // Reset pour le prochain quiz
-    console.log("Quiz questions : ", quiz.questions);
+//   if (currentQuizNumber <= TOTAL_QUIZZES) {
+//     //et on crée le prochain avec le bon type
+//     quiz = new Quiz(getQuizType(currentQuizNumber));
+//     user.setQuiz(quiz);
+//     results = []; // Reset pour le prochain quiz
+//     console.log("Quiz questions : ", quiz.questions);
 
-    // Vider le texte et afficher le bouton
-    ui.colorText.innerHTML = "";
-    ui.btnStart.style.display = "block";
-    ui.btnStart.innerHTML = `Quiz suivant (${currentQuizNumber}/${TOTAL_QUIZZES})`;
+//     // Vider le texte et afficher le bouton
+//     ui.colorText.innerHTML = "";
+//     ui.btnStart.style.display = "block";
+//     ui.btnStart.innerHTML = `Quiz suivant (${currentQuizNumber}/${TOTAL_QUIZZES})`;
     
-    updateQuizCounter();
-    isMouseLocked = true;
-    isAnswerLocked = true;
-  } else {
-    // Tous les quiz sont terminés
-    endAllQuizzes();
-  }
-}
+//     updateQuizCounter();
+//     isMouseLocked = true;
+//     isAnswerLocked = true;
+//   } else {
+//     // Tous les quiz sont terminés
+//     endAllQuizzes();
+//   }
+// }
 
 //finir UN quiz (passer au suivant)
-function endQuiz() {
-  const score = quiz.getScore();
-  const total = quiz.questions.length;
+// function endQuiz() {
+//   const score = quiz.getScore();
+//   const total = quiz.questions.length;
 
-  console.log(`Quiz ${currentQuizNumber} terminé: ${score}/${total}`);
+//   console.log(`Quiz ${currentQuizNumber} terminé: ${score}/${total}`);
 
-  // Passer au quiz suivant au lieu de tout terminer
-  nextQuiz();
-}
+//   // Passer au quiz suivant au lieu de tout terminer
+//   nextQuiz();
+// }
 
 //finir TOUS les quiz (à la fin du 6ème)
 function endAllQuizzes() {
@@ -183,7 +193,7 @@ function endAllQuizzes() {
 }
 
 //enregistrer la reponse
-function submitAnswer(colorClickedFR) {
+function submitAnswer(itemClicked) {
   endTimer();
   isTracking = false;
 
@@ -196,23 +206,20 @@ function submitAnswer(colorClickedFR) {
 
   const q = quiz.getCurrentQuestion();
 
-  const ans = new Answer({
+  const answers = new Answer({
     question: q,
-    colorAnswer: colorClickedFR,
+    itemAnswer: itemClicked,
     initiation: initiationTime,
     movement: movementTime,
     area: 0,
   });
 
-  quiz.addAnswer(ans);
+  quiz.addAnswer(answers);
 
   //stocker dans json a la fin de la question
   results.push({
-    questionText: q.colorText,
-    inkColor: q.colorName,
-    answer: colorClickedFR,
-    correct: ans.isCorrect(),
-    congruency: q.congruency,
+    answer: itemClicked,
+    correct: answers.isCorrect(),
     initiationTime: initiationTime,
     movementTime: movementTime,
     timestamp: Date.now(),
@@ -220,16 +227,17 @@ function submitAnswer(colorClickedFR) {
   });
 
   //pour debug
-  console.log("Bonne réponse ?", ans.isCorrect());
+  console.log("Bonne réponse ?", answers.isCorrect());
 
   //passer à la suite (ou non)
-  if (quiz.goNext()) {
-    ui.btnStart.style.display = "block";
-    ui.btnStart.innerHTML = "Continuer";
-    ui.colorText.innerHTML = "";
-  } else {
-    endQuiz();
-  }
+  // if (quiz.goNext()) {
+  //   ui.btnStart.style.display = "block";
+  //   ui.btnStart.innerHTML = "Continuer";
+  //   ui.colorText.innerHTML = "";
+  // } else {
+  //   endQuiz();
+  // }
+  endAllQuizzes();
 }
 
 let isAnswerLocked = true;
@@ -252,11 +260,12 @@ ui.btnStart.addEventListener("click", () => {
   isTracking = true;
 });
 
+
 //bouton de reponse
 for (let answerButton of ui.answerButtons) {
-  answerButton.addEventListener("click", (evt) => {
-    const clicked = evt.target.innerText.trim().toLowerCase();
-    if (clicked !== rightAnswerValue) {
+  answerButton.addEventListener("click", () => {
+    const clicked = answerButton; 
+    if (!clicked.classList.contains("correct")) {
       if (isAnswerLocked) return;
       ui.wrongSign.style.display = "block";
       ui.btnStart.style.display = "none";
@@ -347,4 +356,4 @@ function trackingMouse() {
 }
 
 //au demarrage, compteur
-updateQuizCounter();
+// updateQuizCounter();

@@ -1,24 +1,50 @@
 //un quiz: c'est un set d'essais
 
 import { Essai } from "./Essai.js";
+import { TypeEssai } from "./Essai.js";
 
 export class Quiz {
-  constructor(type) {
-    this.quizType = type;
-    this.questions = this.generateQuestions(type);
+  constructor() {
+    this.questions = this.generateQuestions();
     this.answers = [];
     this.currentIndex = 0;
   }
 
-  generateQuestions(type) {
+  /**
+   * Génère les questions en fonctions des 4 cas : 
+   * - traits simples avec 9 items
+   * - traits simples avec 16 items
+   * - conjonction avec 9 items
+   * - conjonction avec 16 items
+   */
+  generateQuestions() {
     let questions = [];
+    const nbEssais = 20;
 
-    //TO DO : implem avec questions Treisman 
+    for (let i = 0; i < nbEssais; i++) {
+      questions.push(new Essai({
+        typeEssai: TypeEssai.TRAITSIMPLE,
+        nbItems: 9
+       })
+      )
 
-    if (type === 1) {
-      questions.push(...Type1Quiz);
-    } else {
-      questions.push(...Type2Quiz);
+      questions.push(new Essai({
+        typeEssai: TypeEssai.TRAITSIMPLE,
+        nbItems: 16
+       })
+      )
+
+      questions.push(new Essai({
+        typeEssai: TypeEssai.CONJONCTION,
+        nbItems: 9
+       })
+      )
+
+      questions.push(new Essai({
+        typeEssai: TypeEssai.CONJONCTION,
+        nbItems: 16
+       })
+      )
     }
 
     questions = this.shuffleArray(questions);

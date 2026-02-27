@@ -1,14 +1,14 @@
 export class Answer {
-  constructor({ question, colorAnswer, initiation, movement, area, coordSamples }) {
+  constructor({ question, itemAnswer, initiation, movement, area, coordSamples }) {
     this.question = question;
-    this.colorAnswer = colorAnswer;
+    this.itemAnswer = itemAnswer;
     this.initiationTime = initiation;
     this.movementTime = movement;
     this.area = area;
-    this.coordonnates = coordSamples;
+    this.coordinates = coordSamples;
   }
 
   isCorrect() {
-    return this.question.isCorrect(this.colorAnswer);
+    return this.question.isCorrect(this.itemAnswer);
   }
 }
