@@ -18,7 +18,8 @@ export class Quiz {
    * - conjonction avec 16 items
    */
   generateQuestions() {
-  const nbEssais = 2;
+  //ici normalement c'est 20
+  const nbEssais = 2; 
 
   const partie1 = [];
   const partie2 = [];
