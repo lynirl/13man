@@ -152,14 +152,11 @@ background-color: #ffffff;
 
 #items-container {
     display: grid;
-    grid-template-columns: repeat(3, 80px);
-    grid-template-rows: repeat(3, 80px);
     gap: 25px;
-
     justify-content: center;
     align-content: center;
-
     margin-top: 3em;
+    /* plus de repeat(3, 80px) en dur, géré en JS */
 }
 
 
@@ -180,22 +177,26 @@ background-color: #ffffff;
 }
 
 /* ----------- CARRE ----------- */
-
 .item.square .item-shape {
     width: 45px;
     height: 45px;
-    background-color: currentColor;
 }
 
 /* ----------- TRIANGLE ----------- */
-
 .item.triangle .item-shape {
     width: 0;
     height: 0;
-
     border-left: 22px solid transparent;
     border-right: 22px solid transparent;
-    border-bottom: 45px solid currentColor;
+    border-bottom: 45px solid;
+    background-color: transparent !important;
+}
+
+/* ----------- CERCLE ----------- */
+.item.circle .item-shape {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
 }
 
 /* Petit effet hover discret */
