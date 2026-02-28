@@ -2,20 +2,6 @@ import { User } from "./model/User.js";
 import { Quiz } from "./model/Quiz.js";
 import { Answer } from "./model/Answer.js";
 
-//pour les couleurs css
-const colorMap = {
-  rouge: "red",
-  bleu: "blue",
-  jaune: "yellow",
-  vert: "green",
-};
-
-const shapeMap = {
-  cercle: "circle",
-  carre: "square",
-  triangle: "triangle"
-};
-
 //elements de la vue
 const ui = {
   btnStart: document.getElementById("main-button"),
@@ -24,27 +10,24 @@ const ui = {
   endScreen: document.getElementById("end-screen"),
   finalScore: document.getElementById("final-score"),
   btnRestart: document.getElementById("btn-restart"),
-  answerButtons: document.querySelectorAll(".item"),
   wrongSign: document.getElementById("wrong-sign"),
   quizCounter: document.getElementById("quiz-counter")
 }
 
 //donnees du formulaire
-let participantData = JSON.parse(localStorage.getItem("participantData")) || {};
-console.log("participant data:", participantData);
+let formData = JSON.parse(localStorage.getItem("participantData")) || {};
+console.log("participant data:", formData);
 
 //creation de l'user
-let formData = JSON.parse(localStorage.getItem("participantData")) || {};
 const user = new User(formData);
 
 //gestion des quiz
-let currentQuizNumber = 1;
-//pour les resultats des quiz
 let allQuizResults = [];
 
 //creation du quiz
 let quiz = new Quiz();
 user.setQuiz(quiz);
+updateCounter();
 console.log("Quiz questions : ", quiz.questions);
 
 //résultats du quiz actuel
@@ -57,180 +40,127 @@ let initiationTime = 0;
 let movementTime = 0;
 let hasMoved = false;
 
-//Réponses infos
-let rightAnswerValue = "";
-
-// Mettre à jour l'affichage du compteur
-// function updateQuizCounter() {
-//   if (ui.quizCounter) {
-//     const quizType = getQuizType(currentQuizNumber);
-//     ui.quizCounter.innerHTML = `Quiz ${currentQuizNumber} / ${TOTAL_QUIZZES} (Type ${quizType})`;
-//   }
-//   // Aussi dans le titre du bouton start
-//   ui.btnStart.innerHTML = currentQuizNumber === 1 
-//     ? "Démarrer" 
-//     : `Continuer (${currentQuizNumber}/${TOTAL_QUIZZES})`;
-// }
-
-//afficher une question
+//afficher la question courante
 function showCurrentQuestion() {
-  // Afficher le texte au bout de 300ms
+  ui.itemsContainer.innerHTML = "";
+
+  const currentEssai = quiz.questions[quiz.currentIndex];
+  const nbItems = currentEssai.items.length;
+
+  //grille dynamique selon le nombre d'items
+  const cols = Math.ceil(Math.sqrt(nbItems));
+  ui.itemsContainer.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+  ui.itemsContainer.style.gridTemplateRows = `repeat(${cols}, 80px)`;
+
   setTimeout(() => {
-      for (let item of quiz.questions.partie1.items) {
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "item";
-        itemDiv.style.color = item.color;
-        itemDiv.classList.add(item.shape);
-        if (item.isCorrect) {
-          itemDiv.classList.add("correct");
-        }
-        const shapeDiv = document.createElement("div");
-        shapeDiv.className = `item-shape ${shapeMap[item.shape]}`;
-        shapeDiv.style.backgroundColor = colorMap[item.color];
-        itemDiv.appendChild(shapeDiv);
-        ui.itemsContainer.appendChild(itemDiv);
+    for (let item of currentEssai.items) {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "item";
+      itemDiv.classList.add(item.shape);
+      if (item.isCorrect) itemDiv.classList.add("correct");
+
+      const shapeDiv = document.createElement("div");
+      shapeDiv.className = `item-shape`;
+
+      //couleur selon la forme
+      if (item.shape === "triangle") {
+        shapeDiv.style.borderBottomColor = item.color;
+      } else {
+        shapeDiv.style.backgroundColor = item.color;
       }
+
+      itemDiv.appendChild(shapeDiv);
+      ui.itemsContainer.appendChild(itemDiv);
+    }
     document.body.style.cursor = "default";
   }, 300);
 }
 
-//passer au quiz suivant
-// function nextQuiz() {
-//   //on stocke les résultats du quiz actuel
-//   allQuizResults.push({
-//     quizNumber: currentQuizNumber,
-//     quizTitle: quiz.title,
-//     quizType: getQuizType(currentQuizNumber),
-//     score: quiz.getScore(),
-//     total: quiz.questions.length,
-//     trials: results
-//   });
-
-//   currentQuizNumber++;
-
-//   if (currentQuizNumber <= TOTAL_QUIZZES) {
-//     //et on crée le prochain avec le bon type
-//     quiz = new Quiz(getQuizType(currentQuizNumber));
-//     user.setQuiz(quiz);
-//     results = []; // Reset pour le prochain quiz
-//     console.log("Quiz questions : ", quiz.questions);
-
-//     // Vider le texte et afficher le bouton
-//     ui.colorText.innerHTML = "";
-//     ui.btnStart.style.display = "block";
-//     ui.btnStart.innerHTML = `Quiz suivant (${currentQuizNumber}/${TOTAL_QUIZZES})`;
-    
-//     updateQuizCounter();
-//     isMouseLocked = true;
-//     isAnswerLocked = true;
-//   } else {
-//     // Tous les quiz sont terminés
-//     endAllQuizzes();
-//   }
-// }
-
-//finir UN quiz (passer au suivant)
-// function endQuiz() {
-//   const score = quiz.getScore();
-//   const total = quiz.questions.length;
-
-//   console.log(`Quiz ${currentQuizNumber} terminé: ${score}/${total}`);
-
-//   // Passer au quiz suivant au lieu de tout terminer
-//   nextQuiz();
-// }
-
-//finir TOUS les quiz (à la fin du 6ème)
+//finir TOUS les quiz
 function endAllQuizzes() {
-  // Calculer le score total
   let totalScore = 0;
-  let totalQuestions = 0;
+  let totalQuestions = quiz.questions.length;
   
-  allQuizResults.forEach(qr => {
-    totalScore += qr.score;
-    totalQuestions += qr.total;
-  });
 
-  //ça masque les elements du jeu
   ui.gameContainer.style.display = "none";
-  ui.colorText.style.display = "none";
 
-  //ecran de fin
   ui.finalScore.innerHTML = `
     <h2>Expérience terminée !</h2>
-    <p>Score total : ${totalScore} / ${totalQuestions}</p>
-    <p>6 quiz complétés</p>
+    <p>Score total : ${quiz.getScore()} / ${totalQuestions}</p>
   `;
   ui.endScreen.style.display = "block";
 
   isMouseLocked = false;
 
-  //clean le localstorage
   localStorage.removeItem("participantData");
 
+  //remplir allQuizResults
+  allQuizResults.push({
+    quizIndex: quiz.currentIndex,
+    trials: results
+  });
+
+
   //envoyer TOUTES les donnees des 6 quiz
-  // savedata({
-  //   user: {
-  //     age: user.age,
-  //     genre: user.genre,
-  //     lateralite: user.lateralite,
-  //     daltonisme: user.daltonisme,
-  //   },
-  //   totalQuizzes: TOTAL_QUIZZES,
-  //   allResults: allQuizResults
-  // });
+  savedata({
+    user: {
+       age: user.age,
+       genre: user.genre,
+       lateralite: user.lateralite,
+       daltonisme: user.daltonisme,
+       troubles: user.troubles,
+     },
+     allResults: results
+   })
 }
 
 //enregistrer la reponse
 function submitAnswer(itemClicked) {
   endTimer();
   isTracking = false;
+  isAnswerLocked = true;
 
   console.log(coordSamples);
   console.log("Mouvement time :", movementTime);
 
-  const q = quiz.getCurrentQuestion();
+  const q = quiz.questions[quiz.currentIndex];
 
-  const answers = new Answer({
-    question: q,
-    itemAnswer: itemClicked,
-    initiation: initiationTime,
-    movement: movementTime,
-    area: 0,
-  });
+  const answer = new Answer(q, itemClicked, initiationTime, movementTime, 0, coordSamples);
+  quiz.answers.push(answer);
 
-  quiz.addAnswer(answers);
-
-  //stocker dans json a la fin de la question
   results.push({
-    answer: itemClicked,
-    correct: answers.isCorrect(),
-    initiationTime: initiationTime,
-    movementTime: movementTime,
-    timestamp: Date.now(),
-    coordinates: coordSamples,
-  });
+  //infos sur l'essai
+  partType: q.typeEssai,
+  nbItems: q.nbItems,
+  targetColor: q.items.find(i => i.isCorrect).color,
+  targetShape: q.items.find(i => i.isCorrect).shape,
+  //résultat
+  correct: itemClicked.classList.contains("correct"),
+  //temps
+  initiationTime: initiationTime,
+  movementTime: movementTime,
+  timestamp: Date.now(),  
+  //trajectoire
+  coordinates: coordSamples,
+});
 
-  //pour debug
-  console.log("Bonne réponse ?", answers.isCorrect());
+  console.log("Bonne réponse ?", itemClicked.classList.contains("correct"));
 
-  //passer à la suite (ou non)
-  // if (quiz.goNext()) {
-  //   ui.btnStart.style.display = "block";
-  //   ui.btnStart.innerHTML = "Continuer";
-  //   ui.colorText.innerHTML = "";
-  // } else {
-  //   endQuiz();
-  // }
-  endAllQuizzes();
+  if (quiz.goNext()) {
+    // question suivante
+    ui.btnStart.style.display = "block";
+    ui.btnStart.innerHTML = "Continuer";
+  } else {
+    endAllQuizzes();
+  }
 }
 
 let isAnswerLocked = true;
 
-//bouton demarrer
-// (on initie tout)
+//bouton demarrer / continuer
 ui.btnStart.addEventListener("click", () => {
   showCurrentQuestion();
+   updateCounter();
   ui.btnStart.style.display = "none";
   document.body.style.cursor = "none";
   isMouseLocked = false;
@@ -244,29 +174,24 @@ ui.btnStart.addEventListener("click", () => {
   isTracking = true;
 });
 
+//listener sur le container (délégation) car les items sont créés dynamiquement
+ui.itemsContainer.addEventListener("click", (event) => {
+  const clicked = event.target.closest(".item");
+  if (!clicked || isAnswerLocked) return;
 
-//bouton de reponse
-for (let answerButton of ui.answerButtons) {
-  answerButton.addEventListener("click", () => {
-    const clicked = answerButton; 
-    if (!clicked.classList.contains("correct")) {
-      if (isAnswerLocked) return;
-      ui.wrongSign.style.display = "block";
-      ui.btnStart.style.display = "none";
-      setTimeout(() => {
-        ui.wrongSign.style.display = "none";
-        isAnswerLocked = true;
-        submitAnswer(clicked);
-      }, 2000);
-    } else {
+  if (!clicked.classList.contains("correct")) {
+    ui.wrongSign.style.display = "block";
+    setTimeout(() => {
+      ui.wrongSign.style.display = "none";
       submitAnswer(clicked);
-    }
-  });
-}
+    }, 2000);
+  } else {
+    submitAnswer(clicked);
+  }
+});
 
 //enregistrer IT
 let isMouseLocked = true;
-
 let lastMouseX = 0;
 let lastMouseY = 0;
 
@@ -292,7 +217,6 @@ function endTimer() {
   } else {
     movementTime = null;
   }
-
   console.log("Movement time :", movementTime);
 }
 
@@ -306,7 +230,7 @@ function savedata(data) {
   xhr.send(JSON.stringify(data));
 }
 
-//coordonnees des clics
+//coordonnees de la souris
 let isTracking = false;
 let coordSamples = [];
 let isTrackingLoopRunning = false;
@@ -339,5 +263,14 @@ function trackingMouse() {
   loop();
 }
 
-//au demarrage, compteur
-// updateQuizCounter();
+//mettre à jour le compteur
+function updateCounter() {
+  const currentQuestion = quiz.currentIndex + 1;
+  const totalQuestions = quiz.questions.length;
+  
+  // partie : 20 questions par partie, 4 parties
+  const currentPart = Math.ceil(currentQuestion / 20);
+  const totalParts = 4;
+
+  ui.quizCounter.innerHTML = `Partie ${currentPart}/${totalParts} — Question ${currentQuestion}/${totalQuestions}`;
+}
