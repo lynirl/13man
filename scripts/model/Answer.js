@@ -9,6 +9,6 @@ export class Answer {
   }
 
   isCorrect() {
-    return this.question.isCorrect(this.itemAnswer);
-  }
+    return this.itemAnswer.classList.contains("correct");
+}
 }
