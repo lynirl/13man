@@ -5,12 +5,10 @@ import { TypeEssai } from "./Essai.js";
 
 export class Quiz {
   constructor() {
-    this.questions = this.generateQuestions();
-    this.answers = { 
-      
-    };
-    this.currentIndex = 0;
-  }
+  this.questions = this.generateQuestions();
+  this.answers = [];
+  this.currentIndex = 0;
+}
 
   /**
    * Génère les questions en fonctions des 4 cas : 
@@ -20,44 +18,27 @@ export class Quiz {
    * - conjonction avec 16 items
    */
   generateQuestions() {
-    let questions = {
-      partie1: [],
-      partie2: [],
-      partie3: [],
-      partie4: []
-    }
-      
-    const nbEssais = 20;
+  const nbEssais = 2;
 
-    for (let i = 0; i < nbEssais; i++) {
-      
-      questions.partie1 = this.shuffleArray(new Essai(
-        TypeEssai.TRAITSIMPLE,
-        9
-       )
-      )
+  const partie1 = [];
+  const partie2 = [];
+  const partie3 = [];
+  const partie4 = [];
 
-      questions.partie2 = this.shuffleArray(new Essai(
-        TypeEssai.TRAITSIMPLE,
-        16
-       )
-      )
-
-      questions.partie3 = this.shuffleArray(new Essai(
-        TypeEssai.CONJONCTION,
-        9
-       )
-      )
-
-      questions.partie4 = this.shuffleArray(new Essai(
-        TypeEssai.CONJONCTION,
-        16
-       )
-      )
-    }
-
-    return questions;
+  for (let i = 0; i < nbEssais; i++) {
+    partie1.push(new Essai(TypeEssai.TRAITSIMPLE, 9));
+    partie2.push(new Essai(TypeEssai.TRAITSIMPLE, 16));
+    partie3.push(new Essai(TypeEssai.CONJONCTION, 9));
+    partie4.push(new Essai(TypeEssai.CONJONCTION, 16));
   }
+
+  this.shuffleArray(partie1);
+  this.shuffleArray(partie2);
+  this.shuffleArray(partie3);
+  this.shuffleArray(partie4);
+
+  return partie1.concat(partie2, partie3, partie4);
+}
 
   shuffleArray(questions) {
     for (let i = questions.length - 1; i > 0; i--) {
