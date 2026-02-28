@@ -150,6 +150,7 @@ function submitAnswer(itemClicked) {
     // question suivante
     ui.btnStart.style.display = "block";
     ui.btnStart.innerHTML = "Continuer";
+    updateCounter();
   } else {
     endAllQuizzes();
   }
@@ -267,10 +268,9 @@ function trackingMouse() {
 function updateCounter() {
   const currentQuestion = quiz.currentIndex + 1;
   const totalQuestions = quiz.questions.length;
-  
-  // partie : 20 questions par partie, 4 parties
-  const currentPart = Math.ceil(currentQuestion / 20);
-  const totalParts = 4;
+  const nbEssaisParPartie = totalQuestions / 4;  // 4 parties
 
-  ui.quizCounter.innerHTML = `Partie ${currentPart}/${totalParts} — Question ${currentQuestion}/${totalQuestions}`;
+  const currentPart = Math.ceil(currentQuestion / nbEssaisParPartie);
+
+  ui.quizCounter.innerHTML = `Partie ${currentPart}/4 — Question ${currentQuestion}/${totalQuestions}`;
 }
