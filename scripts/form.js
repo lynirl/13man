@@ -8,6 +8,7 @@ document.getElementById("user-form").addEventListener("submit", function (e) {
       genre: document.getElementById("genre").value,
       lateralite: document.getElementById("lateralite").value,
       daltonisme: document.getElementById("daltonisme").value,
+      troubles: document.getElementById("troubles").value,
     };
 
     //on met dans localStorage pq on peut pas le passer a main.html
