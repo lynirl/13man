@@ -89,6 +89,25 @@ let initiationTime = 0;
 let movementTime = 0;
 let hasMoved = false;
 
+const TRIAL_TIMEOUT_MS = 30000;
+let trialTimeoutId = null;
+
+function clearTrialTimeout() {
+  if (trialTimeoutId !== null) {
+    clearTimeout(trialTimeoutId);
+    trialTimeoutId = null;
+  }
+}
+
+function startTrialTimeout() {
+  clearTrialTimeout();
+  trialTimeoutId = setTimeout(() => {
+    if (!isAnswerLocked) {
+      submitAnswer(null);
+    }
+  }, TRIAL_TIMEOUT_MS);
+}
+
 //afficher la question courante
 function showCurrentQuestion() {
   ui.itemsContainer.innerHTML = "";
@@ -140,6 +159,7 @@ function endAllQuizzes() {
   ui.endScreen.style.display = "block";
 
   isMouseLocked = false;
+  clearTrialTimeout();
 
   localStorage.removeItem("participantData");
   clearProgress();
@@ -152,20 +172,21 @@ function endAllQuizzes() {
 
   console.log("All quiz results:", allQuizResults);
   //envoyer TOUTES les donnees des 6 quiz
-  // savedata({
-  //   user: {
-  //      age: user.age,
-  //      genre: user.genre,
-  //      lateralite: user.lateralite,
-  //      daltonisme: user.daltonisme,
-  //      troubles: user.troubles,
-  //    },
-  //    allResults: results
-  //  })
+  savedata({
+    user: {
+       age: user.age,
+       genre: user.genre,
+       lateralite: user.lateralite,
+       daltonisme: user.daltonisme,
+       troubles: user.troubles,
+     },
+     allResults: results
+   })
 }
 
 //enregistrer la reponse
 function submitAnswer(itemClicked) {
+  clearTrialTimeout();
   endTimer();
   isTracking = false;
   isAnswerLocked = true;
@@ -174,8 +195,10 @@ function submitAnswer(itemClicked) {
   console.log("Mouvement time :", movementTime);
 
   const q = quiz.questions[quiz.currentIndex];
+  const isCorrectAnswer = itemClicked?.classList?.contains("correct") ?? false;
+  const answerItem = itemClicked ?? { classList: { contains: () => false } };
 
-  const answer = new Answer(q, itemClicked, initiationTime, movementTime, 0, coordSamples);
+  const answer = new Answer(q, answerItem, initiationTime, movementTime, 0, coordSamples);
   quiz.answers.push(answer);
 
   results.push({
@@ -185,16 +208,17 @@ function submitAnswer(itemClicked) {
   targetColor: q.items.find(i => i.isCorrect).color,
   targetShape: q.items.find(i => i.isCorrect).shape,
   //résultat
-  correct: itemClicked.classList.contains("correct"),
+  correct: isCorrectAnswer,
   //temps
   initiationTime: initiationTime,
   movementTime: movementTime,
   timestamp: Date.now(),  
   //trajectoire
   coordinates: coordSamples,
+  timedOut: itemClicked === null,
 });
 
-  console.log("Bonne réponse ?", itemClicked.classList.contains("correct"));
+  console.log("Bonne réponse ?", isCorrectAnswer);
 
   if (quiz.goNext()) {
     saveProgress();
@@ -229,6 +253,7 @@ ui.btnStart.addEventListener("click", () => {
   hasMoved = false;
   coordSamples = [];
   isTracking = true;
+  startTrialTimeout();
 });
 
 //listener sur le container (délégation) car les items sont créés dynamiquement
@@ -239,6 +264,7 @@ ui.itemsContainer.addEventListener("click", (event) => {
   if (!clicked.classList.contains("correct")) {
     ui.wrongSign.style.display = "block";
     setTimeout(() => {
+      if (isAnswerLocked) return;
       ui.wrongSign.style.display = "none";
       submitAnswer(clicked);
     }, 2000);
