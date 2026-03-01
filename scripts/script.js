@@ -24,14 +24,63 @@ const user = new User(formData);
 //gestion des quiz
 let allQuizResults = [];
 
+const PROGRESS_STORAGE_KEY = "quizProgress";
+
+function loadProgress() {
+  const rawProgress = sessionStorage.getItem(PROGRESS_STORAGE_KEY);
+  if (!rawProgress) return null;
+
+  try {
+    return JSON.parse(rawProgress);
+  } catch (error) {
+    console.warn("Impossible de lire la progression sauvegardée:", error);
+    sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
+    return null;
+  }
+}
+
+function saveProgress() {
+  sessionStorage.setItem(
+    PROGRESS_STORAGE_KEY,
+    JSON.stringify({
+      questions: quiz.questions,
+      currentIndex: quiz.currentIndex,
+      results,
+    })
+  );
+}
+
+function clearProgress() {
+  sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
+}
+
 //creation du quiz
 let quiz = new Quiz();
 user.setQuiz(quiz);
-updateCounter();
-console.log("Quiz questions : ", quiz.questions);
 
 //résultats du quiz actuel
 let results = [];
+
+const progress = loadProgress();
+if (progress && Array.isArray(progress.questions)) {
+  quiz.questions = progress.questions;
+  quiz.currentIndex = Number.isInteger(progress.currentIndex) ? progress.currentIndex : 0;
+  results = Array.isArray(progress.results) ? progress.results : [];
+
+  if (quiz.currentIndex > 0 && quiz.currentIndex < quiz.questions.length) {
+    ui.btnStart.innerHTML = "Continuer";
+  }
+
+  if (quiz.currentIndex >= quiz.questions.length) {
+    clearProgress();
+    quiz = new Quiz();
+    user.setQuiz(quiz);
+    results = [];
+  }
+}
+
+updateCounter();
+console.log("Quiz questions : ", quiz.questions);
 
 // Chronos
 let initiationStart = 0;
@@ -78,21 +127,22 @@ function showCurrentQuestion() {
 
 //finir TOUS les quiz
 function endAllQuizzes() {
-  let totalScore = 0;
   let totalQuestions = quiz.questions.length;
+  let totalScore = results.filter((trial) => trial.correct).length;
   
 
   ui.gameContainer.style.display = "none";
 
   ui.finalScore.innerHTML = `
     <h2>Expérience terminée !</h2>
-    <p>Score total : ${quiz.getScore()} / ${totalQuestions}</p>
+    <p>Score total : ${totalScore} / ${totalQuestions}</p>
   `;
   ui.endScreen.style.display = "block";
 
   isMouseLocked = false;
 
   localStorage.removeItem("participantData");
+  clearProgress();
 
   //remplir allQuizResults
   allQuizResults.push({
@@ -100,18 +150,18 @@ function endAllQuizzes() {
     trials: results
   });
 
-
+  console.log("All quiz results:", allQuizResults);
   //envoyer TOUTES les donnees des 6 quiz
-  savedata({
-    user: {
-       age: user.age,
-       genre: user.genre,
-       lateralite: user.lateralite,
-       daltonisme: user.daltonisme,
-       troubles: user.troubles,
-     },
-     allResults: results
-   })
+  // savedata({
+  //   user: {
+  //      age: user.age,
+  //      genre: user.genre,
+  //      lateralite: user.lateralite,
+  //      daltonisme: user.daltonisme,
+  //      troubles: user.troubles,
+  //    },
+  //    allResults: results
+  //  })
 }
 
 //enregistrer la reponse
@@ -147,10 +197,16 @@ function submitAnswer(itemClicked) {
   console.log("Bonne réponse ?", itemClicked.classList.contains("correct"));
 
   if (quiz.goNext()) {
+    saveProgress();
+
+    if (quiz.currentIndex > 0 && quiz.currentIndex % 20 === 0) {
+      window.location.href = "break.html";
+      return;
+    }
+
     // question suivante
     ui.btnStart.style.display = "block";
     ui.btnStart.innerHTML = "Continuer";
-    updateCounter();
   } else {
     endAllQuizzes();
   }
@@ -160,8 +216,8 @@ let isAnswerLocked = true;
 
 //bouton demarrer / continuer
 ui.btnStart.addEventListener("click", () => {
+  updateCounter();
   showCurrentQuestion();
-   updateCounter();
   ui.btnStart.style.display = "none";
   document.body.style.cursor = "none";
   isMouseLocked = false;
