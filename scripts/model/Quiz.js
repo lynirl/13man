@@ -19,7 +19,7 @@ export class Quiz {
    */
   generateQuestions() {
   //ici normalement c'est 20
-  const nbEssais = 20; 
+  const nbEssais = 8; 
 
   const partie1 = [];
   const partie2 = [];
