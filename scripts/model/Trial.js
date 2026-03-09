@@ -6,7 +6,7 @@ export class Trial {
   constructor(trialData) {
     this.typeEssai = trialData.type;
     this.nbItems = trialData.nbItems;
-    this.items = this._buildItems(trialData);
+    this.items = this.buildItems(trialData);
   }
 
   /**
@@ -14,7 +14,7 @@ export class Trial {
    *   TRAITSIMPLE  → target (×1) + distractor (× nbItems-1)
    *   CONJONCTION  → target (×1) + distractors répartis équitablement (× nbItems-1)
    */
-  _buildItems(trialData) {
+  buildItems(trialData) {
     const total = trialData.nbItems;
     const itemList = [];
 
@@ -37,10 +37,10 @@ export class Trial {
     }
 
     // Mélanger pour que la cible ne soit pas toujours en position 0
-    return this._shuffle(itemList);
+    return this.shuffle(itemList);
   }
 
-  _shuffle(array) {
+  shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
