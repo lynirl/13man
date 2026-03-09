@@ -361,5 +361,5 @@ function updateCounter() {
 
   const currentPart = Math.ceil(currentQuestion / nbEssaisParPartie);
 
-  ui.quizCounter.innerHTML = `Partie ${currentPart}/4 — Question ${currentQuestion}/${totalQuestions}`;
+  ui.quizCounter.innerHTML = `Question ${currentQuestion}/${totalQuestions}`;
 }
