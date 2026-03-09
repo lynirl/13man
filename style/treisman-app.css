@@ -9,7 +9,7 @@ body {
     display: flex;
     justify-content: center;
     color: white;
-    margin : 4% 5% 5% 5%;
+    margin : 0 5% 5% 5%;
     height: 100vh;
     box-sizing: border-box;
 }
@@ -146,7 +146,7 @@ background-color: #ffffff;
     color: yellow;
     font-size: 30px;
     position: absolute;
-    top: 80%;
+    top: 60%;
     user-select: none;
 }
 

@@ -202,9 +202,9 @@ function submitAnswer(itemClicked) {
   isAnswerLocked = true;
 
   if (itemClicked === null) {
-    document.getElementById("timeout-message").style.display = "block";
+    document.getElementById("warning-message").style.display = "block";
   } else {
-    document.getElementById("timeout-message").style.display = "none";
+    document.getElementById("warning-message").style.display = "none";
   }
 
   console.log(coordSamples);
@@ -256,7 +256,7 @@ let isAnswerLocked = true;
 
 //bouton demarrer / continuer
 ui.btnStart.addEventListener("click", () => {
-  document.getElementById("timeout-message").style.display = "none";
+  document.getElementById("warning-message").style.display = "none";
   updateCounter();
   showCurrentQuestion();
   ui.btnStart.style.display = "none";
