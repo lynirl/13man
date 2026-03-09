@@ -35,34 +35,38 @@ let allQuizResults = [];
 
 const PROGRESS_STORAGE_KEY = "quizProgress";
 
-sessionStorage.removeItem(PROGRESS_STORAGE_KEY); // Supprimer les données de progression à chaque chargement de la page
-
+// Use localStorage so progress survives a navigation to the break page
+// (sessionStorage is per-tab and can be lost depending on how the page is opened).
 function loadProgress() {
-  const rawProgress = sessionStorage.getItem(PROGRESS_STORAGE_KEY);
+  const rawProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
   if (!rawProgress) return null;
 
   try {
     return JSON.parse(rawProgress);
   } catch (error) {
     console.warn("Impossible de lire la progression sauvegardée:", error);
-    sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
+    localStorage.removeItem(PROGRESS_STORAGE_KEY);
     return null;
   }
 }
 
 function saveProgress() {
-  sessionStorage.setItem(
-    PROGRESS_STORAGE_KEY,
-    JSON.stringify({
-      questions: quiz.questions,
-      currentIndex: quiz.currentIndex,
-      results,
-    })
-  );
+  try {
+    localStorage.setItem(
+      PROGRESS_STORAGE_KEY,
+      JSON.stringify({
+        questions: quiz.questions,
+        currentIndex: quiz.currentIndex,
+        results,
+      })
+    );
+  } catch (e) {
+    console.error('Échec de la sauvegarde de la progression:', e);
+  }
 }
 
 function clearProgress() {
-  sessionStorage.removeItem(PROGRESS_STORAGE_KEY);
+  localStorage.removeItem(PROGRESS_STORAGE_KEY);
 }
 
 //creation du quiz
@@ -241,7 +245,7 @@ function submitAnswer(itemClicked) {
   if (quiz.goNext()) {
     saveProgress();
 
-    if (quiz.currentIndex > 0 && quiz.currentIndex % 20 === 0) {
+    if (quiz.currentIndex > 0 && quiz.currentIndex == 23) {
       window.location.href = "break.html";
       return;
     }
