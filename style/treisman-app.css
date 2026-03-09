@@ -157,7 +157,7 @@ background-color: #ffffff;
     justify-content: center;
     align-content: center;
     margin-top: 3em;
-    /* plus de repeat(3, 80px) en dur, géré en JS */
+    min-height: 400px;
 }
 
 
