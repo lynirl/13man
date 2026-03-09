@@ -191,6 +191,12 @@ function submitAnswer(itemClicked) {
   isTracking = false;
   isAnswerLocked = true;
 
+  if (itemClicked === null) {
+    document.getElementById("timeout-message").style.display = "block";
+  } else {
+    document.getElementById("timeout-message").style.display = "none";
+  }
+
   console.log(coordSamples);
   console.log("Mouvement time :", movementTime);
 
@@ -240,6 +246,7 @@ let isAnswerLocked = true;
 
 //bouton demarrer / continuer
 ui.btnStart.addEventListener("click", () => {
+  document.getElementById("timeout-message").style.display = "none";
   updateCounter();
   showCurrentQuestion();
   ui.btnStart.style.display = "none";
@@ -262,9 +269,9 @@ ui.itemsContainer.addEventListener("click", (event) => {
   if (!clicked || isAnswerLocked) return;
 
   if (!clicked.classList.contains("correct")) {
+    isAnswerLocked = true; 
     ui.wrongSign.style.display = "block";
     setTimeout(() => {
-      if (isAnswerLocked) return;
       ui.wrongSign.style.display = "none";
       submitAnswer(clicked);
     }, 2000);
