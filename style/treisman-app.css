@@ -68,6 +68,11 @@ p {
     border: solid 2px white;
 }
 
+#img-container {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
 /* MAIN SECTION */
 
 #main-button {
