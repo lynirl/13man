@@ -21,6 +21,8 @@ const COLOR_MAP = {
   yellow: "#EFD94C",
 };
 
+const wrongSound = new Audio("../assets/wrong.mp3");
+
 //donnees du formulaire
 let formData = JSON.parse(localStorage.getItem("participantData")) || {};
 console.log("participant data:", formData);
@@ -280,6 +282,10 @@ ui.itemsContainer.addEventListener("click", (event) => {
 
   if (!clicked.classList.contains("correct")) {
     isAnswerLocked = true; 
+
+     wrongSound.currentTime = 0; // rejouer depuis le début
+    wrongSound.play();
+    
     ui.wrongSign.style.display = "block";
     setTimeout(() => {
       ui.wrongSign.style.display = "none";
