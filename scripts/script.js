@@ -285,11 +285,7 @@ ui.itemsContainer.addEventListener("click", (event) => {
   if (!clicked || isAnswerLocked) return;
 
   if (!clicked.classList.contains("correct")) {
-    isAnswerLocked = true; 
-
-     wrongSound.currentTime = 0; // rejouer depuis le début
-    wrongSound.play();
-    
+    isAnswerLocked = true;
     ui.wrongSign.style.display = "block";
     setTimeout(() => {
       ui.wrongSign.style.display = "none";
