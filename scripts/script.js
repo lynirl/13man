@@ -14,6 +14,13 @@ const ui = {
   quizCounter: document.getElementById("quiz-counter")
 }
 
+const COLOR_MAP = {
+  blue:   "#95DFFE",
+  green:  "#10F610",
+  red:    "#EFCECE",
+  yellow: "#EFD94C",
+};
+
 //donnees du formulaire
 let formData = JSON.parse(localStorage.getItem("participantData")) || {};
 console.log("participant data:", formData);
@@ -25,6 +32,8 @@ const user = new User(formData);
 let allQuizResults = [];
 
 const PROGRESS_STORAGE_KEY = "quizProgress";
+
+sessionStorage.removeItem(PROGRESS_STORAGE_KEY); // Supprimer les données de progression à chaque chargement de la page
 
 function loadProgress() {
   const rawProgress = sessionStorage.getItem(PROGRESS_STORAGE_KEY);
@@ -130,11 +139,12 @@ function showCurrentQuestion() {
       const shapeDiv = document.createElement("div");
       shapeDiv.className = `item-shape`;
 
-      //couleur selon la forme
+       //couleur selon la forme
+      const hexColor = COLOR_MAP[item.color] ?? item.color;
       if (item.shape === "triangle") {
-        shapeDiv.style.borderBottomColor = item.color;
+        shapeDiv.style.borderBottomColor = hexColor;
       } else {
-        shapeDiv.style.backgroundColor = item.color;
+        shapeDiv.style.backgroundColor = hexColor;
       }
 
       itemDiv.appendChild(shapeDiv);
