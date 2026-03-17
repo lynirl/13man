@@ -68,6 +68,12 @@ p {
     border: solid 2px white;
 }
 
+#triangle-green {
+    width: 1.5em;
+    height: 1em;
+    margin-left: 0.5em;
+}
+
 #img-container {
     display: flex;
     align-items: center;
